@@ -37,7 +37,8 @@ Sistem pakar berbasis web untuk mendiagnosis penyakit pada sapi menggunakan meto
 
 - Python 3.11+
 - Node.js 18+ (untuk Tailwind CSS CLI)
-- SQLite (development) atau PostgreSQL (production)
+- MySQL 8.0+ (atau SQLite untuk development ringan)
+- Visual C++ Build Tools (Windows, untuk `mysqlclient`)
 
 ## Instalasi
 
@@ -67,6 +68,8 @@ pip install -r requirements.txt
 npm install
 ```
 
+> **Catatan Windows**: Jika `mysqlclient` gagal diinstal, unduh wheel yang sesuai dari [https://pypi.org/project/mysqlclient/](https://pypi.org/project/mysqlclient/) atau gunakan `pymysql` sebagai alternatif dengan menambahkan `pymysql` ke `requirements.txt` dan `pymysql.install_as_MySQLdb()` di `config/__init__.py`.
+
 ### 4. Konfigurasi environment
 
 ```sh
@@ -77,15 +80,23 @@ copy .env.example .env
 # cp .env.example .env
 ```
 
-Edit `.env` sesuai kebutuhan. Untuk development dengan SQLite, nilai default sudah cukup. Untuk production, atur `DEBUG=False`, gunakan `SECRET_KEY` yang kuat, dan konfigurasi koneksi PostgreSQL.
+Edit `.env` sesuai kebutuhan. Secara default sudah dikonfigurasi untuk MySQL. Sesuaikan `DB_NAME`, `DB_USER`, `DB_PASSWORD` dengan MySQL Anda. Untuk development ringan, bisa beralih ke SQLite dengan mengomentari baris MySQL dan mengaktifkan baris SQLite.
 
-### 5. Migrasi database
+### 5. Buat database MySQL
+
+Buat database MySQL sebelum migrasi:
+
+```sh
+mysql -u root -p -e "CREATE DATABASE sistem_pakar_sapi CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
+
+### 6. Migrasi database
 
 ```sh
 python manage.py migrate
 ```
 
-### 6. Seed data awal
+### 7. Seed data awal
 
 ```sh
 python manage.py seed_data           # 5 penyakit + 17 gejala + aturan CF
@@ -93,19 +104,19 @@ python manage.py add_new_diseases    # +6 penyakit + 18 gejala + aturan CF
 python manage.py seed_solusi         # solusi penanganan komprehensif
 ```
 
-### 7. Buat admin
+### 8. Buat admin
 
 ```sh
 python manage.py createsuperuser
 ```
 
-### 8. Build Tailwind CSS
+### 9. Build Tailwind CSS
 
 ```sh
 npm run build
 ```
 
-### 9. Jalankan server
+### 10. Jalankan server
 
 ```sh
 python manage.py runserver
@@ -196,7 +207,7 @@ sistem-pakar-sapi/
 Untuk deployment production:
 
 1. Set `DEBUG=False` dan `SECRET_KEY` yang kuat di `.env`
-2. Konfigurasi PostgreSQL di `.env` (hapus komentar konfigurasi DB)
+2. Konfigurasi database (MySQL atau PostgreSQL) di `.env`
 3. Jalankan `python manage.py collectstatic`
 4. Gunakan WSGI server seperti **gunicorn** atau **uvicorn**
 
@@ -204,7 +215,7 @@ Untuk deployment production:
 
 - **Backend**: Django 5.2, Django REST Framework 3.16
 - **Frontend**: Tailwind CSS 3.4, Alpine.js 3.14
-- **Database**: SQLite (development), PostgreSQL (production)
+- **Database**: MySQL 8.0+ (production), SQLite (development ringan)
 - **Metode**: Certainty Factor (CF)
 
 ## Lisensi

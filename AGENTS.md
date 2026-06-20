@@ -2,7 +2,7 @@
 
 ## Stack
 - Django 5.2 + DRF 3.16 / Tailwind CSS 3.4 (CLI, standalone) / Alpine.js 3.14
-- Python 3.11, SQLite (dev) / PostgreSQL (prod)
+- Python 3.11, MySQL 8.0+ (primary) / SQLite (ringan)
 - All JS is plain inline Alpine; no bundler, no SPA.
 
 ## Commands
@@ -46,8 +46,8 @@ No test suite in the repo.
 
 ## Important
 - `.env` is required (`SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS` — see `.env.example`)
-- DB switch to PostgreSQL by setting `DB_ENGINE` in `.env`
+- DB switch to MySQL/PostgreSQL/SQLite by setting `DB_ENGINE` in `.env`
 - DRF has no auth configured — `AllowAny`, `JSONRenderer` only
 - Django messages are the flash notification system — CSS classes: `error`/red, `warning`/yellow, else blue
 - Diagnosa requires selecting ≥1 symptom; each symptom gets CF_user=1.0
-- Riwayat scoped by user name: staff/superuser sees all, others filtered by `nama_pemilik__icontains`
+- Riwayat scoped by user FK: staff/superuser sees all, others filtered by `user=request.user`

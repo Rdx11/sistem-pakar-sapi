@@ -61,16 +61,30 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ── Database ──────────────────────────────────────────────────────────────────
-# SQLite untuk development, PostgreSQL untuk production (atur via .env)
-if os.getenv('DB_ENGINE', '').startswith('django.db.backends.postgresql'):
+# SQLite (dev) / MySQL (dev/prod) / PostgreSQL (prod) — atur via .env
+DB_ENGINE = os.getenv('DB_ENGINE', '').strip()
+
+if DB_ENGINE.startswith('django.db.backends.postgresql'):
     DATABASES = {
         'default': {
-            'ENGINE': os.getenv('DB_ENGINE'),
+            'ENGINE': DB_ENGINE,
             'NAME': os.getenv('DB_NAME'),
             'USER': os.getenv('DB_USER'),
             'PASSWORD': os.getenv('DB_PASSWORD'),
             'HOST': os.getenv('DB_HOST', 'localhost'),
             'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
+elif DB_ENGINE.startswith('django.db.backends.mysql'):
+    DATABASES = {
+        'default': {
+            'ENGINE': DB_ENGINE,
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '3306'),
+            'OPTIONS': {'charset': 'utf8mb4'},
         }
     }
 else:
