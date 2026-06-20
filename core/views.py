@@ -115,6 +115,7 @@ def diagnosa(request):
 
         gejala_qs = Gejala.objects.filter(id__in=gejala_ids)
         riwayat = NilaiCF.objects.create(
+            user=request.user,
             nama_pemilik=nama_pemilik,
             nama_sapi=nama_sapi,
             gejala_dipilih=list(gejala_qs.values('id', 'kode', 'nama')),
@@ -134,13 +135,9 @@ def hasil(request, pk):
 
 @login_required(login_url='login')
 def riwayat(request):
-    # User hanya bisa lihat riwayat diagnosa mereka sendiri (berdasarkan nama pemilik)
-    # Atau jika superuser, bisa lihat semua
     if request.user.is_superuser or request.user.is_staff:
         data = NilaiCF.objects.all()
     else:
-        # Filter berdasarkan username atau nama lengkap user
-        user_name = request.user.get_full_name() or request.user.username
-        data = NilaiCF.objects.filter(nama_pemilik__icontains=user_name)
+        data = NilaiCF.objects.filter(user=request.user)
     
     return render(request, 'riwayat.html', {'data': data})

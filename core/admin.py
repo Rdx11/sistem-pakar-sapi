@@ -61,7 +61,7 @@ class SolusiPenangananAdmin(admin.ModelAdmin):
 
 @admin.register(NilaiCF)
 class NilaiCFAdmin(admin.ModelAdmin):
-    list_display = ('nama_pemilik', 'nama_sapi', 'tanggal')
+    list_display = ('nama_pemilik', 'nama_sapi', 'user', 'tanggal')
     readonly_fields = ('gejala_dipilih', 'hasil_cf', 'tanggal')
-    list_filter = ('tanggal',)
-    search_fields = ('nama_pemilik', 'nama_sapi')
+    list_filter = ('tanggal', 'user')
+    search_fields = ('nama_pemilik', 'nama_sapi', 'user__username')

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Penyakit(models.Model):
@@ -88,6 +89,7 @@ class NilaiCF(models.Model):
     Riwayat hasil konsultasi.
     Menyimpan gejala yang dipilih dan hasil perhitungan CF dalam format JSON.
     """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     nama_pemilik = models.CharField(max_length=100)
     nama_sapi = models.CharField(max_length=100, blank=True)
     tanggal = models.DateTimeField(auto_now_add=True)
